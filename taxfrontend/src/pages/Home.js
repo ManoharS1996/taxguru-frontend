@@ -22,7 +22,7 @@ const Home = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/articles")
+      .get("https://sai1taxbackend.onrender.com/api/articles") // ✅ updated URL
       .then((res) => setArticles(res.data))
       .catch((err) => console.error(err));
   }, []);
