@@ -48,9 +48,9 @@ const Header = () => {
         <NavLink href="#">Budget 2025</NavLink>
       </NavLinks>
       <SocialIcons>
-        <IconLink href="https://www.youtube.com" target="_blank" rel="noopener noreferrer"><FaYoutube /></IconLink>
-        <IconLink href="https://twitter.com" target="_blank" rel="noopener noreferrer"><FaTwitter /></IconLink>
-        <IconLink href="https://www.instagram.com" target="_blank" rel="noopener noreferrer"><FaInstagram /></IconLink>
+        <IconLink href="https://www.youtube.com" target="_blank"><FaYoutube /></IconLink>
+        <IconLink href="https://twitter.com" target="_blank"><FaTwitter /></IconLink>
+        <IconLink href="https://www.instagram.com" target="_blank"><FaInstagram /></IconLink>
       </SocialIcons>
     </HeaderContainer>
   );
