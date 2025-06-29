@@ -3,6 +3,7 @@ import axios from 'axios';
 import styled from 'styled-components';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaEye, FaComment, FaBookmark, FaShareAlt } from 'react-icons/fa';
+import Header from '../components/Header';
 
 const Container = styled.div`
   max-width: 900px;
@@ -148,56 +149,98 @@ const ArticleDetail = () => {
     fetchArticle();
   }, [id]);
 
+  const handleSave = async () => {
+    try {
+      const res = await axios.post(`https://sai1taxbackend.onrender.com/api/articles/${id}/save`);
+      setArticle(res.data.data);
+    } catch (err) {
+      console.error('Error saving article:', err);
+    }
+  };
+
+  const handleShare = async () => {
+    try {
+      const res = await axios.post(`https://sai1taxbackend.onrender.com/api/articles/${id}/share`);
+      setArticle(res.data.data);
+      
+      if (navigator.share) {
+        await navigator.share({
+          title: article.title,
+          text: article.excerpt,
+          url: window.location.href
+        });
+      } else {
+        // Fallback for browsers that don't support Web Share API
+        navigator.clipboard.writeText(window.location.href);
+        alert('Link copied to clipboard!');
+      }
+    } catch (err) {
+      console.error('Error sharing article:', err);
+    }
+  };
+
+  // const handleComment = async () => {
+  //   try {
+  //     const res = await axios.post(`https://sai1taxbackend.onrender.com/api/articles/${id}/comment`);
+  //     setArticle(res.data.data);
+  //   } catch (err) {
+  //     console.error('Error adding comment:', err);
+  //   }
+  // };
+
   if (loading) return <div>Loading article...</div>;
   if (error) return <div>{error}</div>;
   if (!article) return <div>Article not found</div>;
 
   return (
-    <Container>
-      {article.imageUrl && (
-        <ImageContainer>
-          <img src={article.imageUrl} alt={article.title} />
-        </ImageContainer>
-      )}
-      
-      <ContentContainer>
-        <BackButton onClick={() => navigate(-1)}>
-          <FaArrowLeft /> Back to articles
-        </BackButton>
+    <>
+      <Header />
+      <Container>
+        {article.imageUrl && (
+          <ImageContainer>
+            <img src={article.imageUrl} alt={article.title} />
+          </ImageContainer>
+        )}
         
-        <Title>{article.title}</Title>
-        {article.subheading && <Subheading>{article.subheading}</Subheading>}
-        
-        <Content dangerouslySetInnerHTML={{ __html: article.content.replace(/\n/g, '<br/>') }} />
-        
-        <MetaInfo>
-          <MetaLeft>
-            <MetaItem>
-              <FaEye /> {article.views} views
-            </MetaItem>
-            <MetaItem>
-              <FaComment /> {article.comments} comments
-            </MetaItem>
-            <MetaItem>
-              Published: {new Date(article.date).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })}
-            </MetaItem>
-          </MetaLeft>
-        </MetaInfo>
-        
-        <ActionButtons>
-          <ActionButton>
-            <FaBookmark /> Save
-          </ActionButton>
-          <ActionButton>
-            <FaShareAlt /> Share
-          </ActionButton>
-        </ActionButtons>
-      </ContentContainer>
-    </Container>
+        <ContentContainer>
+          <BackButton onClick={() => navigate(-1)}>
+            <FaArrowLeft /> Back to articles
+          </BackButton>
+          
+          <Title>{article.title}</Title>
+          {article.subheading && <Subheading>{article.subheading}</Subheading>}
+          
+          <Content dangerouslySetInnerHTML={{ __html: article.content.replace(/\n/g, '<br/>') }} />
+          
+          <MetaInfo>
+            <MetaLeft>
+              <MetaItem>
+                <FaEye /> {article.views} views
+              </MetaItem>
+              <MetaItem>
+                <FaComment /> {article.comments} comments
+              </MetaItem>
+              <MetaItem>
+                Published: {new Date(article.date).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </MetaItem>
+            </MetaLeft>
+          </MetaInfo>
+          
+          <ActionButtons>
+            <ActionButton onClick={handleSave}>
+              <FaBookmark /> Save ({article.saves || 0})
+            </ActionButton>
+            <ActionButton onClick={handleShare}>
+              <FaShareAlt /> Share ({article.shares || 0})
+            </ActionButton>
+          </ActionButtons>
+        </ContentContainer>
+      </Container>
+    </>
   );
 };
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { FaEye, FaComment, FaBookmark, FaShareAlt } from 'react-icons/fa';
+import { FaEye, FaComment } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 const Card = styled.div`
@@ -78,12 +78,6 @@ const FooterItem = styled.span`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  transition: color 0.2s;
-  
-  &:hover {
-    color: ${({ theme }) => theme.colors.primary};
-    cursor: pointer;
-  }
 `;
 
 const ReadMoreLink = styled(Link)`

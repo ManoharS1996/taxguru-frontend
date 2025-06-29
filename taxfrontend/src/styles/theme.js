@@ -38,5 +38,10 @@ export const theme = {
     small: "0 1px 3px rgba(0,0,0,0.12)",
     medium: "0 4px 6px rgba(0,0,0,0.1)",
     large: "0 10px 15px rgba(0,0,0,0.1)"
+  },
+  transitions: {
+    fast: "0.1s ease",
+    normal: "0.3s ease",
+    slow: "0.5s ease"
   }
 };

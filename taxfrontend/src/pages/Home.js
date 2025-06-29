@@ -3,7 +3,7 @@ import axios from 'axios';
 import ArticleCard from '../components/ArticleCard';
 import SearchBar from '../components/SearchBar';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import Header from '../components/Header';
 
 const Container = styled.div`
   max-width: 900px;
@@ -11,34 +11,11 @@ const Container = styled.div`
   padding: 0 1.5rem;
 `;
 
-const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-`;
-
 const Heading = styled.h1`
   color: ${({ theme }) => theme.colors.primary};
-  margin: 0;
+  margin: 0 0 2rem 0;
   font-size: 2rem;
-`;
-
-const CreateArticleLink = styled(Link)`
-  display: inline-flex;
-  align-items: center;
-  padding: 0.75rem 1.5rem;
-  background-color: ${({ theme }) => theme.colors.primary};
-  color: white;
-  border-radius: 6px;
-  text-decoration: none;
-  font-weight: 500;
-  transition: all 0.2s;
-  
-  &:hover {
-    background-color: ${({ theme }) => theme.colors.primaryDark};
-    transform: translateY(-2px);
-  }
+  text-align: center;
 `;
 
 const ArticlesContainer = styled.div`
@@ -111,56 +88,56 @@ const Home = () => {
   };
 
   return (
-    <Container>
-      <Header>
+    <>
+      <Header />
+      <Container>
         <Heading>📚 Latest Articles</Heading>
-        <CreateArticleLink to="/create">+ Create New Article</CreateArticleLink>
-      </Header>
-      
-      <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-      
-      <ArticlesContainer>
-        {loading ? (
-          <div>Loading articles...</div>
-        ) : error ? (
-          <div>Error: {error}</div>
-        ) : articles.length > 0 ? (
-          articles.map((article) => (
-            <ArticleCard key={article._id} article={article} />
-          ))
-        ) : (
-          <div>No articles found. Try a different search term.</div>
-        )}
-      </ArticlesContainer>
-      
-      {totalPages > 1 && (
-        <Pagination>
-          <PageButton 
-            onClick={() => handlePageChange(currentPage - 1)} 
-            disabled={currentPage === 1}
-          >
-            Previous
-          </PageButton>
-          
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-            <PageButton
-              key={page}
-              onClick={() => handlePageChange(page)}
-              active={page === currentPage}
+        
+        <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+        
+        <ArticlesContainer>
+          {loading ? (
+            <div>Loading articles...</div>
+          ) : error ? (
+            <div>Error: {error}</div>
+          ) : articles.length > 0 ? (
+            articles.map((article) => (
+              <ArticleCard key={article._id} article={article} />
+            ))
+          ) : (
+            <div>No articles found. Try a different search term.</div>
+          )}
+        </ArticlesContainer>
+        
+        {totalPages > 1 && (
+          <Pagination>
+            <PageButton 
+              onClick={() => handlePageChange(currentPage - 1)} 
+              disabled={currentPage === 1}
             >
-              {page}
+              Previous
             </PageButton>
-          ))}
-          
-          <PageButton 
-            onClick={() => handlePageChange(currentPage + 1)} 
-            disabled={currentPage === totalPages}
-          >
-            Next
-          </PageButton>
-        </Pagination>
-      )}
-    </Container>
+            
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <PageButton
+                key={page}
+                onClick={() => handlePageChange(page)}
+                active={page === currentPage}
+              >
+                {page}
+              </PageButton>
+            ))}
+            
+            <PageButton 
+              onClick={() => handlePageChange(currentPage + 1)} 
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </PageButton>
+          </Pagination>
+        )}
+      </Container>
+    </>
   );
 };
 
