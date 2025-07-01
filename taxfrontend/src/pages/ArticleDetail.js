@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
 import { useParams, useNavigate } from 'react-router-dom';
-import { FaArrowLeft, FaEye, FaComment, FaBookmark, FaShareAlt } from 'react-icons/fa';
+import { FaArrowLeft } from 'react-icons/fa';
 import Header from '../components/Header';
 
 const Container = styled.div`
@@ -67,55 +67,11 @@ const Content = styled.div`
   color: ${({ theme }) => theme.colors.text};
   line-height: 1.8;
   margin-bottom: 2rem;
-  white-space: pre-line;
   font-size: 1.1rem;
+  white-space: pre-line;
   
   p {
     margin-bottom: 1.5rem;
-  }
-`;
-
-const MetaInfo = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: ${({ theme }) => theme.colors.gray};
-  font-size: 0.9rem;
-  border-top: 1px solid ${({ theme }) => theme.colors.grayLight};
-  padding-top: 1.5rem;
-  margin-top: 2rem;
-`;
-
-const MetaLeft = styled.div`
-  display: flex;
-  gap: 1.5rem;
-`;
-
-const MetaItem = styled.span`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-`;
-
-const ActionButtons = styled.div`
-  display: flex;
-  gap: 1rem;
-  margin-top: 2rem;
-`;
-
-const ActionButton = styled.button`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: ${({ theme }) => theme.colors.secondary};
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s;
-  
-  &:hover {
-    background: ${({ theme }) => theme.colors.grayLight};
   }
 `;
 
@@ -130,7 +86,7 @@ const ArticleDetail = () => {
     const fetchArticle = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`https://sai1taxbackend.onrender.com/api/articles/${id}`);
+        const res = await axios.get(`http://localhost:5000/api/articles/${id}`);
         
         if (res.data.success) {
           setArticle(res.data.data);
@@ -149,45 +105,6 @@ const ArticleDetail = () => {
     fetchArticle();
   }, [id]);
 
-  const handleSave = async () => {
-    try {
-      const res = await axios.post(`https://sai1taxbackend.onrender.com/api/articles/${id}/save`);
-      setArticle(res.data.data);
-    } catch (err) {
-      console.error('Error saving article:', err);
-    }
-  };
-
-  const handleShare = async () => {
-    try {
-      const res = await axios.post(`https://sai1taxbackend.onrender.com/api/articles/${id}/share`);
-      setArticle(res.data.data);
-      
-      if (navigator.share) {
-        await navigator.share({
-          title: article.title,
-          text: article.excerpt,
-          url: window.location.href
-        });
-      } else {
-        // Fallback for browsers that don't support Web Share API
-        navigator.clipboard.writeText(window.location.href);
-        alert('Link copied to clipboard!');
-      }
-    } catch (err) {
-      console.error('Error sharing article:', err);
-    }
-  };
-
-  // const handleComment = async () => {
-  //   try {
-  //     const res = await axios.post(`https://sai1taxbackend.onrender.com/api/articles/${id}/comment`);
-  //     setArticle(res.data.data);
-  //   } catch (err) {
-  //     console.error('Error adding comment:', err);
-  //   }
-  // };
-
   if (loading) return <div>Loading article...</div>;
   if (error) return <div>{error}</div>;
   if (!article) return <div>Article not found</div>;
@@ -196,11 +113,15 @@ const ArticleDetail = () => {
     <>
       <Header />
       <Container>
-        {article.imageUrl && (
-          <ImageContainer>
-            <img src={article.imageUrl} alt={article.title} />
-          </ImageContainer>
-        )}
+        <ImageContainer>
+          <img 
+            src={article.imageUrl} 
+            alt={article.title}
+            onError={(e) => {
+              e.target.src = 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80';
+            }}
+          />
+        </ImageContainer>
         
         <ContentContainer>
           <BackButton onClick={() => navigate(-1)}>
@@ -210,34 +131,7 @@ const ArticleDetail = () => {
           <Title>{article.title}</Title>
           {article.subheading && <Subheading>{article.subheading}</Subheading>}
           
-          <Content dangerouslySetInnerHTML={{ __html: article.content.replace(/\n/g, '<br/>') }} />
-          
-          <MetaInfo>
-            <MetaLeft>
-              <MetaItem>
-                <FaEye /> {article.views} views
-              </MetaItem>
-              <MetaItem>
-                <FaComment /> {article.comments} comments
-              </MetaItem>
-              <MetaItem>
-                Published: {new Date(article.date).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                })}
-              </MetaItem>
-            </MetaLeft>
-          </MetaInfo>
-          
-          <ActionButtons>
-            <ActionButton onClick={handleSave}>
-              <FaBookmark /> Save ({article.saves || 0})
-            </ActionButton>
-            <ActionButton onClick={handleShare}>
-              <FaShareAlt /> Share ({article.shares || 0})
-            </ActionButton>
-          </ActionButtons>
+          <Content>{article.content}</Content>
         </ContentContainer>
       </Container>
     </>

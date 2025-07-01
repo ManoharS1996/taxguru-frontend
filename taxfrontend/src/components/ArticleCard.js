@@ -18,17 +18,17 @@ const Card = styled.div`
 `;
 
 const ImageContainer = styled.div`
-  height: 200px;
+  height: 220px;
   overflow: hidden;
   
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.3s ease;
+    transition: transform 0.5s ease;
     
     &:hover {
-      transform: scale(1.05);
+      transform: scale(1.1);
     }
   }
 `;
@@ -69,17 +69,6 @@ const Footer = styled.div`
   border-top: 1px solid ${({ theme }) => theme.colors.grayLight};
 `;
 
-const FooterLeft = styled.div`
-  display: flex;
-  gap: 1.5rem;
-`;
-
-const FooterItem = styled.span`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-`;
-
 const ReadMoreLink = styled(Link)`
   color: ${({ theme }) => theme.colors.primary};
   text-decoration: none;
@@ -98,26 +87,25 @@ const ReadMoreLink = styled(Link)`
 const ArticleCard = ({ article }) => {
   return (
     <Card>
-      {article.imageUrl && (
-        <ImageContainer>
-          <img src={article.imageUrl} alt={article.title} />
-        </ImageContainer>
-      )}
+      <ImageContainer>
+        <img 
+          src={article.imageUrl} 
+          alt={article.title}
+          onError={(e) => {
+            e.target.src = 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80';
+          }}
+        />
+      </ImageContainer>
       <Content>
         <Title>{article.title}</Title>
         {article.subheading && <Subheading>{article.subheading}</Subheading>}
-        <Excerpt>{article.excerpt || "No excerpt available."}</Excerpt>
+        <Excerpt>{article.excerpt}</Excerpt>
         <Footer>
-          <FooterLeft>
-            <FooterItem>
-              <FaEye /> {article.views || 0} views
-            </FooterItem>
-            <FooterItem>
-              <FaComment /> {article.comments || 0} comments
-            </FooterItem>
-          </FooterLeft>
+          <div>
+            <span><FaEye /> {article.views || 0} views</span>
+          </div>
           <ReadMoreLink to={`/article/${article._id}`}>
-            Read more <span>→</span>
+            Read full article →
           </ReadMoreLink>
         </Footer>
       </Content>
